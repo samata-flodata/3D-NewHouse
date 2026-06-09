@@ -33,56 +33,6 @@
         </div>
       </section>
 
-      <section class="debug-card" aria-label="Debug controls">
-        <div class="debug-card__head">
-          <h2>Debug</h2>
-          <button id="debugToggle" type="button">Hide</button>
-        </div>
-        <div class="debug-card__body" id="debugBody">
-          <div class="debug-grid">
-            <label>
-              <span>Lat</span>
-              <input id="latInput" type="number" step="0.000001" />
-            </label>
-            <label>
-              <span>Lon</span>
-              <input id="lonInput" type="number" step="0.000001" />
-            </label>
-            <label>
-              <span>Height</span>
-              <input id="heightInput" type="number" step="0.1" />
-            </label>
-            <label>
-              <span>Heading</span>
-              <input id="headingInput" type="number" step="1" />
-            </label>
-            <label>
-              <span>Scale</span>
-              <input id="scaleInput" type="number" step="0.01" min="0.01" />
-            </label>
-            <label>
-              <span>Distance</span>
-              <input id="distanceInput" type="number" step="5" min="10" />
-            </label>
-            <label>
-              <span>Pitch</span>
-              <input id="pitchInput" type="number" step="1" min="-89" max="0" />
-            </label>
-          </div>
-
-          <div class="view-grid" aria-label="View presets">
-            <button type="button" data-view-side="front">Front</button>
-            <button type="button" data-view-side="back">Back</button>
-            <button type="button" data-view-side="left">Left</button>
-            <button type="button" data-view-side="right">Right</button>
-            <button type="button" data-view-side="top">Top</button>
-            <button id="fitButton" type="button">Fit</button>
-          </div>
-
-          <textarea id="debugOutput" readonly rows="7" spellcheck="false"></textarea>
-        </div>
-      </section>
-
       <div class="loader" id="loader">
         <div class="loader__label">
           <span>Loading model</span>

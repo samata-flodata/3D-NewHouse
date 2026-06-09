@@ -24,19 +24,6 @@ const percentText = document.querySelector("#percent");
 const satelliteButton = document.querySelector("#satelliteButton");
 const firstFloorButton = document.querySelector("#firstFloorButton");
 const secondFloorButton = document.querySelector("#secondFloorButton");
-const debugToggle = document.querySelector("#debugToggle");
-const debugBody = document.querySelector("#debugBody");
-const debugOutput = document.querySelector("#debugOutput");
-const fitButton = document.querySelector("#fitButton");
-const debugInputs = {
-  latitude: document.querySelector("#latInput"),
-  longitude: document.querySelector("#lonInput"),
-  height: document.querySelector("#heightInput"),
-  heading: document.querySelector("#headingInput"),
-  scale: document.querySelector("#scaleInput"),
-  distance: document.querySelector("#distanceInput"),
-  pitch: document.querySelector("#pitchInput"),
-};
 
 Cesium.Ion.defaultAccessToken = "";
 
@@ -67,7 +54,6 @@ viewer.scene.globe.depthTestAgainstTerrain = true;
 viewer.scene.skyAtmosphere.show = true;
 viewer.scene.globe.enableLighting = true;
 viewer.scene.backgroundColor = Cesium.Color.BLACK;
-viewer.camera.percentageChanged = 0.01;
 
 const modelPrimitives = new Map();
 const loadingModels = new Set();
@@ -96,7 +82,6 @@ const satelliteCameraDefaults = {
   pitch: -53.254,
   distance: 105.152,
 };
-let isProgrammaticCameraMove = false;
 
 function getModelMatrix() {
   const position = Cesium.Cartesian3.fromDegrees(
@@ -137,8 +122,6 @@ async function updateModel(floor = activeFloor) {
       url: model.url,
       modelMatrix: getModelMatrix(),
       scale: placement.scale,
-      minimumPixelSize: 96,
-      maximumScale: 20000,
       shadows: Cesium.ShadowMode.DISABLED,
     });
 
@@ -205,9 +188,7 @@ function setCameraView({ heading, pitch, distance }, duration = 0.35) {
   cameraSettings.heading = heading;
   cameraSettings.pitch = pitch;
   cameraSettings.distance = distance;
-  syncDebugPanel();
 
-  isProgrammaticCameraMove = true;
   const target = Cesium.Cartesian3.fromDegrees(
     placement.longitude,
     placement.latitude,
@@ -224,110 +205,11 @@ function setCameraView({ heading, pitch, distance }, duration = 0.35) {
     offset,
     complete: () => {
       viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
-      isProgrammaticCameraMove = false;
-      updateDebugFromCamera();
     },
     cancel: () => {
       viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
-      isProgrammaticCameraMove = false;
-      updateDebugFromCamera();
     },
   });
-}
-
-function fitActiveModel() {
-  const primitive = modelPrimitives.get(activeFloor);
-
-  if (primitive?.boundingSphere) {
-    viewer.camera.flyToBoundingSphere(primitive.boundingSphere, {
-      duration: 0.35,
-      offset: new Cesium.HeadingPitchRange(
-        Cesium.Math.toRadians(cameraSettings.heading),
-        Cesium.Math.toRadians(cameraSettings.pitch),
-        0,
-      ),
-      complete: () => {
-        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
-      },
-      cancel: () => {
-        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
-      },
-    });
-    return;
-  }
-
-  setCameraView(cameraSettings);
-}
-
-function getDebugSnapshot() {
-  return {
-    placement: {
-      latitude: Number(placement.latitude.toFixed(12)),
-      longitude: Number(placement.longitude.toFixed(12)),
-      height: Number(placement.height.toFixed(3)),
-      heading: Number(placement.heading.toFixed(3)),
-      scale: Number(placement.scale.toFixed(4)),
-    },
-    camera: {
-      heading: Number(cameraSettings.heading.toFixed(3)),
-      pitch: Number(cameraSettings.pitch.toFixed(3)),
-      distance: Number(cameraSettings.distance.toFixed(3)),
-    },
-  };
-}
-
-function syncDebugPanel() {
-  if (!debugOutput) return;
-
-  debugInputs.latitude.value = placement.latitude;
-  debugInputs.longitude.value = placement.longitude;
-  debugInputs.height.value = placement.height;
-  debugInputs.heading.value = placement.heading;
-  debugInputs.scale.value = placement.scale;
-  debugInputs.distance.value = cameraSettings.distance;
-  debugInputs.pitch.value = cameraSettings.pitch;
-  debugOutput.value = JSON.stringify(getDebugSnapshot(), null, 2);
-}
-
-function applyDebugPanel() {
-  const readNumber = (input, fallback) => {
-    const value = Number(input.value);
-    return Number.isFinite(value) ? value : fallback;
-  };
-
-  placement.latitude = readNumber(debugInputs.latitude, placement.latitude);
-  placement.longitude = readNumber(debugInputs.longitude, placement.longitude);
-  placement.height = readNumber(debugInputs.height, 0);
-  placement.heading = readNumber(debugInputs.heading, 0);
-  placement.scale = Math.max(readNumber(debugInputs.scale, 1), 0.01);
-  cameraSettings.distance = Math.max(readNumber(debugInputs.distance, 80), 10);
-  cameraSettings.pitch = Math.min(Math.max(readNumber(debugInputs.pitch, -38), -89), 0);
-  updateLoadedModelPlacement();
-  syncDebugPanel();
-  setCameraView(cameraSettings, 0.15);
-  viewer.scene.requestRender();
-}
-
-function getDistanceToPlacement() {
-  const modelPosition = Cesium.Cartesian3.fromDegrees(
-    placement.longitude,
-    placement.latitude,
-    placement.height,
-  );
-  return Cesium.Cartesian3.distance(viewer.camera.positionWC, modelPosition);
-}
-
-function updateDebugFromCamera() {
-  if (isProgrammaticCameraMove) return;
-
-  cameraSettings.heading = Number(
-    Cesium.Math.toDegrees(viewer.camera.heading).toFixed(3),
-  );
-  cameraSettings.pitch = Number(
-    Cesium.Math.toDegrees(viewer.camera.pitch).toFixed(3),
-  );
-  cameraSettings.distance = Number(Math.max(getDistanceToPlacement(), 10).toFixed(3));
-  syncDebugPanel();
 }
 
 function showSatelliteLayer() {
@@ -390,36 +272,4 @@ firstFloorButton.addEventListener("click", () => {
   setFloorView("first-floor");
 });
 
-debugToggle.addEventListener("click", () => {
-  const isHidden = debugBody.hidden;
-  debugBody.hidden = !isHidden;
-  debugToggle.textContent = isHidden ? "Hide" : "Show";
-});
-
-for (const input of Object.values(debugInputs)) {
-  input.addEventListener("input", applyDebugPanel);
-  input.addEventListener("change", applyDebugPanel);
-}
-
-document.querySelectorAll("[data-view-side]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const distance = cameraSettings.distance;
-    const sideViews = {
-      front: { heading: 0, pitch: -28, distance },
-      right: { heading: 90, pitch: -28, distance },
-      back: { heading: 180, pitch: -28, distance },
-      left: { heading: 270, pitch: -28, distance },
-      top: { heading: 0, pitch: -89, distance: Math.max(distance, 120) },
-    };
-
-    setCameraView(sideViews[button.dataset.viewSide]);
-  });
-});
-
-fitButton.addEventListener("click", fitActiveModel);
-viewer.camera.changed.addEventListener(updateDebugFromCamera);
-
-syncDebugPanel();
-debugBody.hidden = false;
-debugToggle.textContent = "Hide";
 setFloorView("first-floor");

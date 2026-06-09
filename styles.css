@@ -100,104 +100,6 @@ button:focus-visible {
   background: #52d6a1;
 }
 
-.debug-card {
-  position: fixed;
-  top: 92px;
-  right: 16px;
-  z-index: 1001;
-  width: min(360px, calc(100vw - 32px));
-  max-height: calc(100vh - 132px);
-  overflow: auto;
-  border: 1px solid rgb(255 255 255 / 18%);
-  border-radius: 8px;
-  padding: 12px;
-  background: rgb(13 18 20 / 82%);
-  box-shadow: 0 18px 56px rgb(0 0 0 / 34%);
-  backdrop-filter: blur(12px);
-}
-
-.debug-card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.debug-card h2 {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.2;
-  letter-spacing: 0;
-}
-
-.debug-card__head button {
-  min-width: 56px;
-  min-height: 30px;
-  padding: 0 10px;
-}
-
-.debug-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.debug-grid label {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-
-.debug-grid span {
-  color: #cfd8d4;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.debug-grid input,
-.debug-card textarea {
-  width: 100%;
-  min-width: 0;
-  border: 1px solid rgb(255 255 255 / 18%);
-  border-radius: 6px;
-  color: #f6faf8;
-  background: rgb(4 8 10 / 72%);
-}
-
-.debug-grid input {
-  height: 34px;
-  padding: 0 8px;
-  font-size: 12px;
-}
-
-.view-grid {
-  display: grid;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.view-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.view-grid button {
-  min-width: 0;
-  min-height: 34px;
-  padding: 0 8px;
-}
-
-.debug-card textarea {
-  display: block;
-  margin-top: 10px;
-  min-height: 132px;
-  resize: vertical;
-  padding: 8px;
-  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-  font-size: 11px;
-  line-height: 1.4;
-}
-
 .loader {
   position: fixed;
   left: 50%;
@@ -251,14 +153,4 @@ button:focus-visible {
     align-self: flex-start;
   }
 
-  .debug-card {
-    top: auto;
-    right: 16px;
-    bottom: 16px;
-    max-height: 45vh;
-  }
-
-  .debug-grid {
-    grid-template-columns: 1fr 1fr;
-  }
 }
