@@ -1,0 +1,5 @@
+*.glb
+*.zip
+
+!new_house1st_floor_fast_ui.glb
+!new_house2nd_floor_fast_ui.glb

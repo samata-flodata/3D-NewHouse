@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geolocated House Model</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/cesium@1.118.0/Build/Cesium/Widgets/widgets.css"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://unpkg.com/cesium@1.118.0/Build/Cesium/Cesium.js"></script>
+  </head>
+  <body>
+    <main id="app">
+      <div id="map" aria-label="Satellite map with 3D house model"></div>
+
+      <section class="topbar" aria-label="Model controls">
+        <div>
+          <h1>New House Floors</h1>
+          <p id="status">Loading satellite map and model...</p>
+        </div>
+        <div class="actions">
+          <button id="satelliteButton" type="button" title="Show satellite basemap">
+            Satellite
+          </button>
+          <button id="firstFloorButton" type="button" title="Show 1st floor model">
+            1st Floor
+          </button>
+          <button id="secondFloorButton" type="button" title="Show or hide 2nd floor model">
+            2nd Floor
+          </button>
+        </div>
+      </section>
+
+      <section class="debug-card" aria-label="Debug controls">
+        <div class="debug-card__head">
+          <h2>Debug</h2>
+          <button id="debugToggle" type="button">Hide</button>
+        </div>
+        <div class="debug-card__body" id="debugBody">
+          <div class="debug-grid">
+            <label>
+              <span>Lat</span>
+              <input id="latInput" type="number" step="0.000001" />
+            </label>
+            <label>
+              <span>Lon</span>
+              <input id="lonInput" type="number" step="0.000001" />
+            </label>
+            <label>
+              <span>Height</span>
+              <input id="heightInput" type="number" step="0.1" />
+            </label>
+            <label>
+              <span>Heading</span>
+              <input id="headingInput" type="number" step="1" />
+            </label>
+            <label>
+              <span>Scale</span>
+              <input id="scaleInput" type="number" step="0.01" min="0.01" />
+            </label>
+            <label>
+              <span>Distance</span>
+              <input id="distanceInput" type="number" step="5" min="10" />
+            </label>
+            <label>
+              <span>Pitch</span>
+              <input id="pitchInput" type="number" step="1" min="-89" max="0" />
+            </label>
+          </div>
+
+          <div class="view-grid" aria-label="View presets">
+            <button type="button" data-view-side="front">Front</button>
+            <button type="button" data-view-side="back">Back</button>
+            <button type="button" data-view-side="left">Left</button>
+            <button type="button" data-view-side="right">Right</button>
+            <button type="button" data-view-side="top">Top</button>
+            <button id="fitButton" type="button">Fit</button>
+          </div>
+
+          <textarea id="debugOutput" readonly rows="7" spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <div class="loader" id="loader">
+        <div class="loader__label">
+          <span>Loading model</span>
+          <span id="percent">0%</span>
+        </div>
+        <div class="loader__track">
+          <div class="loader__bar" id="bar"></div>
+        </div>
+      </div>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
